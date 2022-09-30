@@ -1,0 +1,91 @@
+package com.notepadapplication;
+
+import java.awt.FileDialog;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+public class Functions {
+	GUI gui;
+	String fileName;
+	String fileAddress;
+	
+	public Functions(GUI gui) {
+		this.gui=gui;
+	}
+	
+	public void newFile() {
+		
+		gui.textArea.setText("");
+		gui.window.setTitle("New");
+		fileName=null;
+		fileAddress=null;
+	}
+	
+	public void open() {
+		
+		FileDialog fileDialog= new FileDialog(gui.window,"Open",FileDialog.LOAD);
+		fileDialog.setVisible(true);
+		
+		if(fileDialog.getFile()!=null) {
+			fileName=fileDialog.getFile();
+			fileAddress=fileDialog.getDirectory();
+			gui.window.setTitle(fileName);
+		}
+		System.out.println("File address and file name "+fileAddress+fileName);
+		try {
+			BufferedReader buffer=new BufferedReader(new FileReader(fileAddress+fileName));
+			gui.textArea.setText("");
+			String line=null;
+			while((line=buffer.readLine())!=null) {
+				gui.textArea.append(line+"\n");
+			}
+			buffer.close();
+		}catch(Exception e) {
+			
+			System.out.println("FILE NOT OPENED");
+		}
+	}
+	
+	public void save() {
+		
+		if(fileName==null) {
+			saveAs();
+		}
+		else {
+			try {
+			FileWriter fileWriter=new FileWriter(fileAddress+fileName);
+			fileWriter.write(gui.textArea.getText());
+			fileWriter.close();
+	
+			}catch(Exception e) {
+				System.out.println("SOMETHING WENT WRONG");
+			}
+		}
+	}
+	
+	public void saveAs() {
+		FileDialog fileDialog= new FileDialog(gui.window,"Save",FileDialog.SAVE);
+		fileDialog.setVisible(true);
+		
+		if(fileDialog.getFile()!=null) {
+			fileName=fileDialog.getFile();
+			fileAddress=fileDialog.getDirectory();
+			gui.window.setTitle(fileName);
+		}
+		
+		try {
+			FileWriter fileWriter=new FileWriter(fileAddress+fileName);
+			fileWriter.write(gui.textArea.getText());
+			fileWriter.close();
+		} catch(Exception e) {
+			System.out.println("SOMETHING WENT WRONG");
+		}
+			
+	}
+	
+	public void exit() {
+		System.exit(0);
+	}
+
+}
